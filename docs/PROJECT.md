@@ -1,6 +1,6 @@
 # Project Writeup: Observability and Performance Stack
 
-Why this exists, how it was built, why each choice, benefits, and interview talking points.
+Why this exists, how it was built, why each choice, benefits, and design trade-offs.
 
 ## 1. The problem it solves
 
@@ -31,7 +31,7 @@ You cannot operate what you cannot see. Most incidents are not "the server explo
 - The whole observability config is code: reproducible across environments, reviewed in pull requests.
 - You can prove reliability claims by running the load tests and watching the system hold or break.
 
-## 5. Interview talking points
+## 5. Design notes and trade-offs
 
 - RED vs USE: RED (Rate, Errors, Duration) for request-driven services, USE (Utilization, Saturation, Errors) for resources. This stack shows both: app RED metrics plus cAdvisor USE metrics.
 - Why alert on p95 and error ratio, not CPU alone: CPU being high is not an incident if users are fine; error rate and latency are what the SLO protects. CPU is a supporting signal.
