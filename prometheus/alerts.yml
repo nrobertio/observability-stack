@@ -1,0 +1,42 @@
+groups:
+  - name: service-slos
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(app_requests_total{status="500"}[2m]))
+            / sum(rate(app_requests_total[2m])) > 0.05
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Error rate above 5 percent"
+          description: "The service is returning 5xx for more than 5 percent of requests over 2m."
+
+      - alert: HighLatencyP95
+        expr: |
+          histogram_quantile(0.95, sum(rate(app_request_latency_seconds_bucket[2m])) by (le)) > 0.5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "p95 latency above 500ms"
+          description: "95th percentile latency on /work has been above 500ms for 2m."
+
+      - alert: TargetDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "A scrape target is down"
+          description: "Prometheus cannot scrape {{ $labels.job }} ({{ $labels.instance }})."
+
+      - alert: HighContainerCPU
+        expr: |
+          sum(rate(container_cpu_usage_seconds_total{name!=""}[2m])) by (name) > 0.9
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container CPU above 90 percent"
+          description: "Container {{ $labels.name }} has used more than 0.9 CPU for 2m."

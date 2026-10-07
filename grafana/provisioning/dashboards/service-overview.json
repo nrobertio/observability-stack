@@ -1,0 +1,31 @@
+{
+  "title": "Service Overview",
+  "uid": "svc-overview",
+  "schemaVersion": 39,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Request rate by status",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "targets": [
+        {"expr": "sum(rate(app_requests_total[1m])) by (status)", "legendFormat": "{{status}}"}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "p95 latency (s)",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "targets": [
+        {"expr": "histogram_quantile(0.95, sum(rate(app_request_latency_seconds_bucket[2m])) by (le))", "legendFormat": "p95"}
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Error ratio",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "targets": [
+        {"expr": "sum(rate(app_requests_total{status=\"500\"}[2m])) / sum(rate(app_requests_total[2m]))"}
+      ]
+    }
+  ]
+}

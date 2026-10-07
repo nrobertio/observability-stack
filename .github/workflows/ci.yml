@@ -1,0 +1,22 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate compose
+        run: docker compose config -q
+      - name: Check Prometheus rules
+        run: |
+          docker run --rm -v $PWD/prometheus:/p prom/prometheus:v2.54.1 \
+            promtool check rules /p/alerts.yml
+      - name: Python app compiles
+        run: |
+          pip install -r app/requirements.txt
+          python -m py_compile app/main.py
